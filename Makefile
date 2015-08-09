@@ -1,5 +1,5 @@
 COPT	= -Wall -ansi -I$(HOME)/include
-LINK1	= -L$(HOME)/lib -lbiop -lgen 
+LINK1	= -L$(HOME)/lib -lbiop -lgen -lxml2
 LINK2	=
 CC	= cc
 

@@ -3,12 +3,12 @@
    Program:    Chothia
    File:       chothia.c
    
-   Version:    V1.7
-   Date:       13.02.14
+   Version:    V2.0
+   Date:       14.02.11
    Function:   Assign canonical classes and display reasons for 
                mismatches.
    
-   Copyright:  (c) Dr. Andrew C. R. Martin, UCL 1995-2014
+   Copyright:  (c) Dr. Andrew C. R. Martin, UCL 1995-2011
    Author:     Dr. Andrew C. R. Martin
    Address:    Biomolecular Structure & Modelling Unit,
                Department of Biochemistry & Molecular Biology,
@@ -66,6 +66,9 @@
    V1.7  13.02.14 All errors and warnings now printed in consistent 
                   format.
                   Now allows 1-letter or 3-letter code sequence files
+   V2.0  14.02.11 Modified to allow new PRIORITY and SUBORDINATE keywords
+                  in data file to deal with breakdown in classical 
+                  canonicals
 
 *************************************************************************/
 /* Includes
@@ -90,8 +93,9 @@
 #define MAXEXPSEQ    300         /* Expected max light + heavy          */
 #define NCDR         5           /* Number of CDRs to process           */
 #define MAXWORD      40          /* Max length of an extracted word     */
-#define SMALLWORD    8           /* Length of small extracted word      */
+#define SMALLWORD    16          /* Length of small extracted word      */
 
+/* Terminates a string at the first alphabetic character                */
 #define TERMALPHA(x) do {  int _termalpha_j;                  \
                         for(_termalpha_j=0;                   \
                             (x)[_termalpha_j];                \
@@ -101,23 +105,52 @@
                               break;                          \
                      }  }  }  while(0)
       
+/* Linked list to store information on canonical class definitions      */
 typedef struct _chothia
 {
-   struct _chothia *next;
-   int             length;
-   char            LoopID[SMALLWORD],
-                   class[SMALLWORD],
-                   source[MAXBUFF],
-                   resnum[MAXCHOTHRES][SMALLWORD],
-                   restype[MAXCHOTHRES][MAXWORD];
+   struct _chothia *next,                           /* Linked list      */
+                   *priority_over,                  /* Priority over which
+                                                       other classes when
+                                                       key residues 
+                                                       clash            */
+                   *subordinate_to;                 /* Suborinate to which
+                                                       other classes when
+                                                       key residues
+                                                       clash            */
+   int             length;                          /* Loop length      */
+   char            LoopID[SMALLWORD],               /* CDR (L1, L2, etc */
+                   class[SMALLWORD],                /* Class name       */
+                   source[MAXBUFF],                 /* Info on class
+                                                       maybe including PDB
+                                                       code in []       */
+                   resnum[MAXCHOTHRES][SMALLWORD],  /* Key positions    */
+                   restype[MAXCHOTHRES][MAXWORD],   /* Allowed residues */
+                   subordinate[SMALLWORD],          /* Class name to
+                                                       which this class is
+                                                       subordinate
+                                                       (0 or 1)         */
+                   priority[SMALLWORD];             /* Class name over
+                                                       which this class
+                                                       takes priority
+                                                       (0 or 1)         */
+   int             npriority,                       /* Number over which
+                                                       this class takes
+                                                       priority (0 or 1)*/
+                   nsubordinate;                    /* Number of classes
+                                                       to which this is
+                                                       subordinate 
+                                                       (0 or 1)         */
+   
 }  CHOTHIA;
 
+/* Input sequence data (array) - residue number label and amino acid    */
 typedef struct
 {
    char            resnum[SMALLWORD],
                    seq;
 }  SEQUENCE;
 
+/* Definitions of CDR loop boundaries (array)                           */
 typedef struct
 {
    char name[SMALLWORD],
@@ -151,6 +184,9 @@ BOOL ParseCmdLine(int argc, char **argv, char *infile, char *outfile,
                   char *ChothiaFile, BOOL *verbose);
 char *KabCho(char *cdr, int length, char *kabspec);
 char *ChoKab(char *cdr, int length, char *kabspec);
+int TestThisCanonical(CHOTHIA *p, char *LoopName, int LoopLen,
+                      SEQUENCE *Sequence, int NRes, 
+                      char *cdr1, int cdr1len);
 
 /************************************************************************/
 /*>int main(int argc, char **argv)
@@ -233,6 +269,7 @@ datafile\n");
    19.12.08 Uses MAXWORD and updated for new GetWord()
             Fixed explicit 160 in fgets to MAXBUFF
             Changed strcpy() to strncpy()
+   14.02.11 Added PRIORITY and SUBORDINATE keywords
 */
 BOOL ReadChothiaData(char *filename)
 {
@@ -243,7 +280,8 @@ BOOL ReadChothiaData(char *filename)
            *buffp;
    CHOTHIA *p = NULL;
    int     count = 0;
-   BOOL    NoEnv;
+   BOOL    NoEnv,
+           GotSubPri = FALSE;
    
    /* Open the data file                                                */
    if((fp=OpenFile(filename,ENV_KABATDIR,"r",&NoEnv))==NULL)
@@ -273,6 +311,24 @@ BOOL ReadChothiaData(char *filename)
                strncpy(p->source, chp, MAXWORD);
             }
          }
+         else if(!upstrncmp(buffp,"PRIORITY",8))
+         {
+            GotSubPri = TRUE;
+            /* Strip out the PRIORITY keyword                           */
+            chp = GetWord(buffp,word,MAXWORD);
+            /* And grab the class name over which this takes priority   */
+            chp = GetWord(chp,p->priority,SMALLWORD);
+            p->npriority = 1;
+         }
+         else if(!upstrncmp(buffp,"SUBORDINATE",11))
+         {
+            GotSubPri = TRUE;
+            /* Strip out the SUBORDINATE keyword                        */
+            chp = GetWord(buffp,word,MAXWORD);
+            /* And grab the class name to which this is subordinate     */
+            chp = GetWord(chp,p->subordinate,SMALLWORD);
+            p->nsubordinate = 1;
+         }
          else if(!upstrncmp(buffp,"CHOTHIANUM",10))
          {
             gCanonChothNum = TRUE;
@@ -295,6 +351,10 @@ BOOL ReadChothiaData(char *filename)
             }
             if(p==NULL) return(FALSE);
             
+            /* 14.02.11 Initialize the PRIORITY and SUBORDINATE fields  */
+            p->priority_over = p->subordinate_to = NULL;
+            p->npriority     = p->nsubordinate   = 0;
+
             /* Strip out the word LOOP                                  */
             chp = GetWord(buffp,word,MAXWORD);
             /* Get the loop id                                          */
@@ -329,6 +389,86 @@ residues when reading Chothia file.\n");
    /* Terminate the previous list of resnums                            */
    if(p!=NULL)
       strncpy(p->resnum[count],"-1",SMALLWORD);
+
+   /* 14.02.11 If we have any PRIORITY/SUBORDINATEs then set the 
+      information for the pointers rather than simple text labels
+   */
+   for(p=gChothia; p!=NULL; NEXT(p))
+   {
+      /* See if this takes priority over anything else                  */
+      if(p->npriority)
+      {
+         int     nmatch = 0;
+         CHOTHIA *q = NULL;
+         for(q=gChothia; q!=NULL; NEXT(q))
+         {
+            if(!strcmp(p->priority, q->class))
+            {
+               p->priority_over = q;
+               nmatch++;
+            }
+         }
+         if(nmatch > 1)
+         {
+            fprintf(stderr,"Chothia: Error 1, Loop %s takes priority \
+over %s, but %s matches %d classes\n", 
+                    p->class, p->priority, p->priority, nmatch);
+            return(FALSE);
+         }
+         if(nmatch < 1)
+         {
+            fprintf(stderr,"Chothia: Error 2, Loop %s takes priority \
+over %s, but %s not found as a valid canonical name\n", 
+                    p->class, p->priority, p->priority);
+            return(FALSE);
+         }
+         if(p->length != p->priority_over->length)
+         {
+            fprintf(stderr,"Chothia: Error 5, Loop %s takes priority \
+over %s, but lengths do not match\n", 
+                    p->class, p->priority);
+            return(FALSE);
+         }
+         
+         
+      }
+      
+      /* See if this is subordinate to anything else                    */
+      if(p->nsubordinate)
+      {
+         int     nmatch = 0;
+         CHOTHIA *q = NULL;
+         for(q=gChothia; q!=NULL; NEXT(q))
+         {
+            if(!strcmp(p->subordinate, q->class))
+            {
+               p->subordinate_to = q;
+               nmatch++;
+            }
+         }
+         if(nmatch > 1)
+         {
+            fprintf(stderr,"Chothia: Error 3, Loop %s is subordinate \
+to %s, but %s matches %d classes\n", 
+                    p->class, p->subordinate, p->subordinate, nmatch);
+            return(FALSE);
+         }
+         if(nmatch < 1)
+         {
+            fprintf(stderr,"Chothia: Error 4, Loop %s is subordinate \
+to %s, but %s not found as a valid canonical name\n", 
+                    p->class, p->subordinate, p->subordinate);
+            return(FALSE);
+         }
+         if(p->length != p->subordinate_to->length)
+         {
+            fprintf(stderr,"Chothia: Error 6, Loop %s is subordinate \
+to %s, but lengths do not match\n", 
+                    p->class, p->priority);
+            return(FALSE);
+         }
+      }
+   }
    
    return(TRUE);
 }
@@ -566,177 +706,6 @@ int FindRes(SEQUENCE *Sequence, int NRes, char *InRes)
 
 
 /************************************************************************/
-/*>void ReportACanonical(FILE *out, char *LoopName, int LoopLen, 
-                         SEQUENCE *Sequence, int NRes, BOOL verbose,
-                         char *cdr1, int cdr1len)
-   -----------------------------------------------------------------
-   Input:   FILE     *out          Output file pointer
-            char     *LoopName     Name of a loop (e.g. L1)
-            int      LoopLen       Length of the loop
-            SEQUENCE *Sequence     Sequence array
-            int      NRes          Length of sequence
-            BOOL     verbose       Flag to display reasons
-            char     *cdr1         Name of CDR1 (L1 or H1)
-            char     *cdr1len      Length of CDR1
-   Returns: BOOL                   Success?
-
-   Reports the canonical class for an individual loop
-
-   16.05.95 Original    By: ACRM
-   17.05.95 Only prints source data if verbose
-   08.05.96 Converts between Chothia and Kabat numbering if required
-   09.05.96 Fixed bug in reporting mismatches with numbering conversion
-   30.05.96 Mismatches report numbering scheme in data file
-            Added check for -1 return from FindRes(); reports deleted
-            residues
-*/
-void ReportACanonical(FILE *out, char *LoopName, int LoopLen, 
-                      SEQUENCE *Sequence, int NRes, BOOL verbose,
-                      char *cdr1, int cdr1len)
-{
-   CHOTHIA *p,
-           *best = NULL;
-   int     i,
-           res,
-           NMismatch,
-           MinMismatch = 10000;
-   BOOL    OK = FALSE;   /* Assume this is not a canonical              */
-   
-   /* Run through the linked list of Canonical definitions              */
-   for(p=gChothia; p!=NULL; NEXT(p))
-   {
-      /* If the Loop name and length match                              */
-      if(!strcmp(p->LoopID, LoopName) && (p->length == LoopLen))
-      {
-         OK = TRUE;   /* Now assume it is a canonical                   */
-         NMismatch = 0;
-         
-         /* Check each residue specified by this canonical definition   */
-         for(i=0; strcmp(p->resnum[i], "-1"); i++)
-         {
-            if(gCanonChothNum == gChothiaNumbered)
-            {
-               /* Both the datafile and the sequence data use the same
-                  numbering scheme (Kabat or Chothia)
-               */
-               res = FindRes(Sequence, NRes, p->resnum[i]);
-            }
-            else if(gCanonChothNum)
-            {
-               /* Datafile uses Chothia numbering while the sequence data
-                  uses Kabat numbering
-               */
-               res = FindRes(Sequence, NRes, 
-                             ChoKab(cdr1, cdr1len, p->resnum[i]));
-            }
-            else
-            {
-               /* Datafile uses Kabat numbering while the sequence data
-                  uses Chothia numbering
-               */
-               res = FindRes(Sequence, NRes, 
-                             KabCho(cdr1, cdr1len, p->resnum[i]));
-            }
-
-            /* As soon as we find a disallowed residue type, set the OK
-               flag to false and increment the mismatch counter
-               30.05.96 Added check on -1
-            */
-            if((res==(-1)) || (!strchr(p->restype[i], Sequence[res].seq)))
-            {
-               OK = FALSE;
-               NMismatch++;
-            }
-         }
-
-         if(OK)   /* If everything OK, break out of the linked list     */
-         {
-            break;
-         }
-         else     /* See if this has the fewest mismatches              */
-         {
-            if(NMismatch < MinMismatch)
-            {
-               MinMismatch = NMismatch;
-               best = p;
-            }
-         }
-         
-      }
-   }
-
-   if(OK)
-   {
-      fprintf(out,"CDR %s  Class %-3s", LoopName, p->class);
-      if(verbose && strlen(p->source))
-         fprintf(out," %s", p->source);
-      fprintf(out,"\n");
-   }
-   else
-   {
-      fprintf(out,"CDR %s  Class ?  \n", LoopName); 
-   
-      if(verbose)
-      {
-         if(best==NULL)
-         {
-            fprintf(out, "! No canonical of the same loop length\n");
-         }
-         else
-         {
-            fprintf(out, "! Similar to class %s, but:\n", best->class);
-
-            /* Display each mismatch for this canonical definition      */
-            for(i=0; strcmp(best->resnum[i], "-1"); i++)
-            {
-               if(gCanonChothNum == gChothiaNumbered)
-               {
-                  /* Both the datafile and the sequence data use the same
-                     numbering scheme (Kabat or Chothia)
-                  */
-                  res = FindRes(Sequence, NRes, best->resnum[i]);
-               }
-               else if(gCanonChothNum)
-               {
-                  /* Datafile uses Chothia numbering while the sequence 
-                     data uses Kabat numbering
-                  */
-                  res = FindRes(Sequence, NRes, 
-                                ChoKab(cdr1, cdr1len, best->resnum[i]));
-               }
-               else
-               {
-                  /* Datafile uses Kabat numbering while the sequence data
-                     uses Chothia numbering
-                  */
-                  res = FindRes(Sequence, NRes, 
-                                KabCho(cdr1, cdr1len, best->resnum[i]));
-               }
-
-               /* 30.05.96 Added check on -1                            */
-               if(res==(-1))
-               {
-                  fprintf(out, "!    %s (%s Numbering) is deleted.\n", 
-                          best->resnum[i],
-                          (gCanonChothNum?"Chothia":"Kabat"));
-               }
-               else if(!strchr(best->restype[i], Sequence[res].seq))
-               {
-                  fprintf(out, "!    %s (%s Numbering) = %c \
-(allows: %s)\n", 
-                          best->resnum[i],
-                          (gCanonChothNum?"Chothia":"Kabat"),
-                          Sequence[res].seq,
-                          best->restype[i]);
-               }
-            }
-         }
-      }
-   }   
-}
-
-
-/************************************************************************/
 /*>void Usage(void)
    ----------------
    Prints a usage message
@@ -749,10 +718,11 @@ void ReportACanonical(FILE *out, char *LoopName, int LoopLen,
    30.05.96 V1.5
    19.12.08 V1.6
    13.02.14 V1.7
+   09.08.15 V2.0
 */
 void Usage(void)
 {
-   fprintf(stderr,"\nChothia V1.7 (c) 1995-2014, Dr. Andrew C.R. Martin, \
+   fprintf(stderr,"\nChothia V2.0 (c) 1995-2015, Dr. Andrew C.R. Martin, \
 UCL\n\n");
 
    fprintf(stderr,"Usage: chothia [-c filename] [-v] [-n] [input.seq \
@@ -862,6 +832,236 @@ BOOL ParseCmdLine(int argc, char **argv, char *infile, char *outfile,
    }
    
    return(TRUE);
+}
+
+/************************************************************************/
+/*>int TestThisCanonical(CHOTHIA *p, char *LoopName, int LoopLen,
+                         SEQUENCE *Sequence, char *cdr1, int cdr1len)
+   ------------------------------------------------------------------
+   16.02.11 Extracted from ReportACanonical()
+*/
+int TestThisCanonical(CHOTHIA *p, char *LoopName, int LoopLen,
+                      SEQUENCE *Sequence, int NRes, 
+                      char *cdr1, int cdr1len)
+{
+   int  NMismatch = 10000, /* Return this if loop length/name wrong     */
+        res,
+        i;
+   
+   /* If the Loop name and length match                                 */
+   if(!strcmp(p->LoopID, LoopName) && (p->length == LoopLen))
+   {
+      NMismatch = 0;  /* Assume we are OK                               */
+         
+      /* Check each residue specified by this canonical definition      */
+      for(i=0; strcmp(p->resnum[i], "-1"); i++)
+      {
+         if(gCanonChothNum == gChothiaNumbered)
+         {
+            /* Both the datafile and the sequence data use the same
+               numbering scheme (Kabat or Chothia)
+            */
+            res = FindRes(Sequence, NRes, p->resnum[i]);
+         }
+         else if(gCanonChothNum)
+         {
+            /* Datafile uses Chothia numbering while the sequence data
+               uses Kabat numbering
+            */
+            res = FindRes(Sequence, NRes, 
+                          ChoKab(cdr1, cdr1len, p->resnum[i]));
+         }
+         else
+         {
+            /* Datafile uses Kabat numbering while the sequence data
+               uses Chothia numbering
+            */
+            res = FindRes(Sequence, NRes, 
+                          KabCho(cdr1, cdr1len, p->resnum[i]));
+         }
+
+         /* This is a disallowed residue type, so increment the mismatch 
+            counter
+            30.05.96 Added check on -1
+         */
+         if((res==(-1)) || (!strchr(p->restype[i], Sequence[res].seq)))
+         {
+            NMismatch++;
+         }
+      }
+   }
+
+   return(NMismatch);
+}
+
+/************************************************************************/
+/*>void ReportACanonical(FILE *out, char *LoopName, int LoopLen, 
+                         SEQUENCE *Sequence, int NRes, BOOL verbose,
+                         char *cdr1, int cdr1len)
+   -----------------------------------------------------------------
+   Input:   FILE     *out          Output file pointer
+            char     *LoopName     Name of a loop (e.g. L1)
+            int      LoopLen       Length of the loop
+            SEQUENCE *Sequence     Sequence array
+            int      NRes          Length of sequence
+            BOOL     verbose       Flag to display reasons
+            char     *cdr1         Name of CDR1 (L1 or H1)
+            char     *cdr1len      Length of CDR1
+   Returns: BOOL                   Success?
+
+   Reports the canonical class for an individual loop
+
+   16.05.95 Original    By: ACRM
+   17.05.95 Only prints source data if verbose
+   08.05.96 Converts between Chothia and Kabat numbering if required
+   09.05.96 Fixed bug in reporting mismatches with numbering conversion
+   30.05.96 Mismatches report numbering scheme in data file
+            Added check for -1 return from FindRes(); reports deleted
+            residues
+   16.02.11 Moved actual canonical finding code out into 
+            TestThisCanonical()
+   17.02.11 Re-written to deal with priority chains
+*/
+void ReportACanonical(FILE *out, char *LoopName, int LoopLen, 
+                      SEQUENCE *Sequence, int NRes, BOOL verbose,
+                      char *cdr1, int cdr1len)
+{
+   CHOTHIA *p,
+           *theMatch,
+           *best = NULL;
+   int     i,
+           res,
+           NMismatch,
+           MinMismatch = 10000;
+   
+   /* Run through the linked list of Canonical definitions              */
+   for(p=gChothia; p!=NULL; NEXT(p))
+   {
+      /* If this is subordinate to something else                       */
+      if(p->nsubordinate)
+      {
+         /* If it hasn't also got things it has priority over (i.e. it's
+            not in the middle of a priority chain
+         */
+         if(p->npriority == 0)
+         {
+            CHOTHIA *q = p;
+         
+            /* Walk to the highest priority class                       */
+            while(q->subordinate_to != NULL)
+            {
+               NEXT(q);
+            }
+            /* q now points to the highest priority class, walk back to 
+               the lowest priority class, testing for a perfect match
+            */
+            do {
+               NMismatch = TestThisCanonical(q, LoopName, LoopLen, 
+                                             Sequence, NRes, 
+                                             cdr1, cdr1len);
+               if(NMismatch == 0)
+               {
+                  break;
+               }
+               q=q->priority_over;
+            }  while(q != NULL);
+            
+            /* If we found a match then use that, otherwise, use p      
+               In other words we only accept mismatches against the 
+               lowest priority class.
+             */
+            theMatch = (q==NULL)?p:q;
+         }
+      }
+      else
+      {
+         theMatch = p;
+         NMismatch = TestThisCanonical(p, LoopName, LoopLen, Sequence, 
+                                       NRes, cdr1, cdr1len);
+      }
+
+      if(NMismatch == 0)  /* We've found the canonical                  */
+      {
+         break;
+      }
+      else
+      {
+         if(NMismatch < MinMismatch)
+         {
+            MinMismatch = NMismatch;
+            best = theMatch;
+         }
+      }
+   }
+
+   if(NMismatch == 0)
+   {
+      fprintf(out,"CDR %s  Class %-3s", LoopName, theMatch->class);
+      if(verbose && strlen(theMatch->source))
+         fprintf(out," %s", theMatch->source);
+      fprintf(out,"\n");
+   }
+   else
+   {
+      fprintf(out,"CDR %s  Class ?  \n", LoopName); 
+   
+      if(verbose)
+      {
+         if(best==NULL)
+         {
+            fprintf(out, "! No canonical of the same loop length\n");
+         }
+         else
+         {
+            fprintf(out, "! Similar to class %s, but:\n", best->class);
+
+            /* Display each mismatch for this canonical definition      */
+            for(i=0; strcmp(best->resnum[i], "-1"); i++)
+            {
+               if(gCanonChothNum == gChothiaNumbered)
+               {
+                  /* Both the datafile and the sequence data use the same
+                     numbering scheme (Kabat or Chothia)
+                  */
+                  res = FindRes(Sequence, NRes, best->resnum[i]);
+               }
+               else if(gCanonChothNum)
+               {
+                  /* Datafile uses Chothia numbering while the sequence 
+                     data uses Kabat numbering
+                  */
+                  res = FindRes(Sequence, NRes, 
+                                ChoKab(cdr1, cdr1len, best->resnum[i]));
+               }
+               else
+               {
+                  /* Datafile uses Kabat numbering while the sequence data
+                     uses Chothia numbering
+                  */
+                  res = FindRes(Sequence, NRes, 
+                                KabCho(cdr1, cdr1len, best->resnum[i]));
+               }
+
+               /* 30.05.96 Added check on -1                            */
+               if(res==(-1))
+               {
+                  fprintf(out, "!    %s (%s Numbering) is deleted.\n", 
+                          best->resnum[i],
+                          (gCanonChothNum?"Chothia":"Kabat"));
+               }
+               else if(!strchr(best->restype[i], Sequence[res].seq))
+               {
+                  fprintf(out, "!    %s (%s Numbering) = %c \
+(allows: %s)\n", 
+                          best->resnum[i],
+                          (gCanonChothNum?"Chothia":"Kabat"),
+                          Sequence[res].seq,
+                          best->restype[i]);
+               }
+            }
+         }
+      }
+   }   
 }
 
 

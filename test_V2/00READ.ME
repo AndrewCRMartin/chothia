@@ -1,0 +1,50 @@
+V2.0 now supports PRIORITY and SUBORDINATE keywords in the canonical
+class definition file. 
+
+The PRIORITY keyword is followed by the name of one canonical class
+and means that this class takes priority over another canonical with
+broader residue requirements.
+
+The SUBORDINATE keyword is followed by the name(s) of one or more
+other canonical class(es) and means that this class is subordinate to
+some other higher priority class(es).
+
+A simple example would be:
+
+LOOP L1 Class1 10
+SUBORDINATE Class2
+...
+
+LOOP L1 Class2 10
+PRIORITY Class1
+...
+
+However, the syntax also supports chains of priorities. For example:
+LOOP L1 Class1 10
+SUBORDINATE Class2
+...
+
+LOOP L1 Class2 10
+PRIORITY Class1
+SUBORDINATE Class3
+...
+
+LOOP L1 Class3 10
+PRIORITY Class2
+...
+
+In this case, Class3 has the highest priority. If a sequence doesn't
+match this then it is tested against Class2 and if the sequence
+doesn't match that it is tested against Class3
+
+
+The code works by building a linked list of PRIORITY/SUBORDINATE
+classes. When it works through the class descriptions, it skips any
+class that has a SUBORDINATE keyword. When it finds a class with only
+a PRIORITY keyword it tests against that and if the loop does not
+match then it works back down the linked list to test against all the
+subordinate classes.
+
+Currently we only accept mismatches with the lowest priority
+class. Even if there is a higher priority class with more matches then
+we reject that in favour of the lowest priority class.
