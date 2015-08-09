@@ -3,12 +3,12 @@
    Program:    Chothia
    File:       chothia.c
    
-   Version:    V1.6
-   Date:       19.12.08
+   Version:    V1.7
+   Date:       13.02.14
    Function:   Assign canonical classes and display reasons for 
                mismatches.
    
-   Copyright:  (c) Dr. Andrew C. R. Martin, UCL 1995-2008
+   Copyright:  (c) Dr. Andrew C. R. Martin, UCL 1995-2014
    Author:     Dr. Andrew C. R. Martin
    Address:    Biomolecular Structure & Modelling Unit,
                Department of Biochemistry & Molecular Biology,
@@ -63,6 +63,9 @@
                   correctly handles deleted residues
    V1.6  19.12.08 Modified to use new GetWord() and various bug-avoiding
                   changes.
+   V1.7  13.02.14 All errors and warnings now printed in consistent 
+                  format.
+                  Now allows 1-letter or 3-letter code sequence files
 
 *************************************************************************/
 /* Includes
@@ -72,10 +75,9 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-
 #include "bioplib/macros.h"
 #include "bioplib/general.h"
-
+#include "bioplib/seq.h"
 
 /************************************************************************/
 /* Defines and macros
@@ -183,19 +185,20 @@ int main(int argc, char **argv)
             }
             else
             {
-               fprintf(stderr,"Chothia: Error in input data\n");
+               fprintf(stderr,"Error (chothia): Error in input data\n");
                return(1);
             }
          }
          else
          {
-            fprintf(stderr,"Chothia: Unable to read Chothia datafile\n");
+            fprintf(stderr,"Error (chothia): Unable to read Chothia \
+datafile\n");
             return(1);
          }
       }
       else
       {
-         fprintf(stderr,"Chothia: Unable to open i/o files\n");
+         fprintf(stderr,"Error (chothia): Unable to open i/o files\n");
          return(1);
       }
    }
@@ -314,8 +317,8 @@ BOOL ReadChothiaData(char *filename)
                chp = GetWord(chp,p->restype[count],MAXWORD);
                if(++count > MAXCHOTHRES)
                {
-                  fprintf(stderr,"Error: (Reading Chothia file) Too many \
-Chothia key residues.\n");
+                  fprintf(stderr,"Error: (chothia) Too many key \
+residues when reading Chothia file.\n");
                   return(FALSE);
                }
             }
@@ -354,6 +357,8 @@ int ReadInputData(FILE *in, SEQUENCE *Sequence)
    
    while(fgets(buffer, MAXBUFF, in))
    {
+      TERMINATE(buffer);  /* 13.02.14 Added this                        */
+      
       if((buffer[0] == 'L' || buffer[0] == 'H') &&
          isdigit(buffer[1]))
       {
@@ -366,12 +371,26 @@ int ReadInputData(FILE *in, SEQUENCE *Sequence)
          
          if(word[0] != '-')
          {
-            Sequence[count].seq = word[0];
+            if(strlen(word) == 3)
+            {
+               Sequence[count].seq = throne(word);
+            }
+            else if(strlen(word) == 1)
+            {
+               Sequence[count].seq = word[0];
+            }
+            else
+            {
+               fprintf(stderr,"Warning (chothia): illegal residue name: \
+%s\n", word);
+               fprintf(stderr,"                   residue ignored.\n");
+            }
+            
             
             if(++count >= MAXSEQ)
             {
-               fprintf(stderr,"Chothia: Too many residues in sequence \
-file\n");
+               fprintf(stderr,"Error (chothia): Too many residues in \
+sequence file\n");
                return(0);
             }
          }
@@ -380,8 +399,8 @@ file\n");
 
    if(count > MAXEXPSEQ)
    {
-      fprintf(stderr,"Chothia: WARNING %d residues in input file. Expect \
-<%d. Maybe two antibodies?\n", count, MAXEXPSEQ);
+      fprintf(stderr,"Warning (chothia): %d residues in input file. \
+Expect <%d. Maybe two antibodies?\n", count, MAXEXPSEQ);
    }
    
    return(count);
@@ -429,16 +448,16 @@ void ReportCanonicals(FILE *out, SEQUENCE *Sequence, int NRes,
    {
       if((start = FindRes(Sequence, NRes, LoopDef[loop].start)) == (-1))
       {
-         fprintf(stderr,"Chothia: Unable to find residue %s in input\n",
-                 LoopDef[loop].start);
+         fprintf(stderr,"Warning (chothia): Unable to find residue %s \
+in input\n", LoopDef[loop].start);
          fprintf(out,"CDR %s  Missing Residues\n",LoopDef[loop].name);
          continue;
       }
 
       if((stop = FindRes(Sequence, NRes, LoopDef[loop].stop)) == (-1))
       {
-         fprintf(stderr,"Chothia: Unable to find residue %s in input\n",
-                 LoopDef[loop].stop);
+         fprintf(stderr,"Warning (chothia): Unable to find residue %s \
+in input\n", LoopDef[loop].stop);
          fprintf(out,"CDR %s  Missing Residues\n",LoopDef[loop].name);
          continue;
       }
@@ -729,10 +748,11 @@ void ReportACanonical(FILE *out, char *LoopName, int LoopLen,
    09.05.96 V1.4  
    30.05.96 V1.5
    19.12.08 V1.6
+   13.02.14 V1.7
 */
 void Usage(void)
 {
-   fprintf(stderr,"\nChothia V1.6 (c) 1995-2008, Dr. Andrew C.R. Martin, \
+   fprintf(stderr,"\nChothia V1.7 (c) 1995-2014, Dr. Andrew C.R. Martin, \
 UCL\n\n");
 
    fprintf(stderr,"Usage: chothia [-c filename] [-v] [-n] [input.seq \
@@ -750,7 +770,7 @@ specified.\n\n");
 an antibody sequence.\n");
    fprintf(stderr,"Input to the program is a listing of Kabat residue \
 numbers and the\n");
-   fprintf(stderr,"one-letter code amino acid name for the residue at \
+   fprintf(stderr,"1-letter or 3-letter code name for the residue at \
 each position. Such\n");
    fprintf(stderr,"a file may be generated from a PIR file using the \
 program KabatSeq.\n");
