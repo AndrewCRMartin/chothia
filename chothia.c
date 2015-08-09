@@ -115,8 +115,8 @@ typedef struct
 /************************************************************************/
 /* Globals
 */
-CHOTHIA   *gChothia = NULL;      /* Linked list of Chothia data         */
-
+CHOTHIA   *gChothia = NULL;        /* Linked list of Chothia data       */
+BOOL      gCanonChothNum = FALSE;  /* Data file uses Chothia numbering  */
 
 /************************************************************************/
 /* Prototypes
@@ -198,6 +198,8 @@ int main(int argc, char **argv)
    Input:   char *filename      The Chothia data filename
    Returns: BOOL                Success?
    Globals: CHOTHIA *gChothia   Linked list of Chothia data
+            BOOL gCanonChothNum Chothia (rather than Kabat) numbering 
+                                used in file
 
    Reads a Chothia canonical definition file. This file has the format:
    LOOP loopid class length
@@ -208,6 +210,7 @@ int main(int argc, char **argv)
 
    16.05.95 Original based on ReadChothiaData() from KabatMan
    30.11.95 Remove leading spaces from strings read from file
+   07.05.96 Handles the CHOTHIANUMBERING keyword
 */
 BOOL ReadChothiaData(char *filename)
 {
@@ -225,6 +228,8 @@ BOOL ReadChothiaData(char *filename)
    {
       return(FALSE);
    }
+
+   gCanonChothNum = FALSE;
 
    while(fgets(buffer,160,fp))
    {
@@ -245,6 +250,10 @@ BOOL ReadChothiaData(char *filename)
                /* Store the text                                        */
                strcpy(p->source, chp);
             }
+         }
+         else if(!upstrncmp(buffp,"CHOTHIANUM",10))
+         {
+            gCanonChothNum = TRUE;
          }
          else if(!upstrncmp(buffp,"LOOP",4))   /* Start of entry       */
          {
