@@ -1,6 +1,18 @@
 ! Chothia canonical definitions for KabatMan.
 !
-! V1.0  09.05.95 Automatic assigments from acaca   By: ACRM
+! V1.0 09.05.95 Automatic assigments from acaca   By: ACRM
+! V1.1 30.11.12 Removed ?14/F following discussion with ACRM
+!               - Exemplar 2bjl had been superseded by 4bjl but 
+!                 the CDR-L1 loop is 13 not 14 as required.
+!               - Replaced exemplar 2mcgA of ?14E (appears wrong) 
+!                 with 1mcwW
+!               - Replaced exemplar 1mcwB of ?14C (appears wrong) 
+!                 with 2mcg1
+!               - Duplicated ?14/C to ?14/D (apparently missing) and
+!                 assigned exemplar 1mcwM 
+!               - Exemplar 1jel of ?16/C has been superseded by 2jel
+!               - Exemplar 2hfl of 3/8A has been superseded by 1yqv
+!                 (occurs also in abm and strict) By: MC
 !
 ! Each class is defined with the keyword LOOP followed by the loop ID,
 ! class name and length. This is then followed by the key residue numbers
@@ -17,18 +29,6 @@
 ! numbering. This keyword is only understood from KabatMan V2.16, so
 ! don't use this file with earlier versions!!
 !
-! MC 30/11/2012    Removed ?14/F following discussion with ACRM
-!                  Exemplar 2bjl had been superseded by 4bjl but 
-!                  the CDR-L1 loop is 13 not 14 as required.
-! MC 30/11/2012    Replaced exemplar 2mcgA of ?14E (appears wrong) 
-!                  with 1mcwW 
-! MC 30/11/2012    Replaced exemplar 1mcwB of ?14C (appears wrong) 
-!                  with 2mcg1
-! MC 30/11/2012    Duplicated ?14/C to ?14/D (apparently missing) and
-!                  assigned exemplar 1mcwM
-! MC 30/11/2012    Exemplar 1jel of ?16/C has been superseded by 2jel
-! MC 30/11/2012    Exemplar 2hfl of 3/8A has been superseded by 1yqv
-!                  (occurs also in abm and strict)
 !
 CHOTHIANUMBERING
 

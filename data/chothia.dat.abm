@@ -10,6 +10,8 @@
 !                Added L3 Classes 4* to 10*
 ! V1.4  09.05.96 Removed some additional classes as these are all treated
 !                properly by chothia.dat.auto
+! V1.5  30.11.12 Exemplar 2hfl of 3 has been superseded by 1yqv
+!                (occurs also in auto and strict)  By: MC
 !
 ! Each class is defined with the keyword LOOP followed by the loop ID,
 ! class name and length. This is then followed by the key residue numbers
@@ -24,8 +26,6 @@
 ! Kabat numbering for H1 fails to place the inserted residues within
 ! the Chothia loop...
 !
-! MC 30/11/2012    Exemplar 2hfl of 3 has been superseded by 1yqv
-!                  (occurs also in auto and strict)
 !
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-L1   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -1,6 +1,10 @@
 ! Chothia canonical definitions for KabatMan.
 !
 ! V1.0  09.05.95 Strict Chothia definitions from the papers By: ACRM
+! V1.1  30.11.12 Exemplar 2hfl of 3 has been superseded by 1yqv
+!                (occurs also in auto and abm) By: MC
+! V1.2  26.06.13 Replaced [7fab/3hfm] for H1 1' 10 with [3hfm/7fab]
+!                then static loader puts 3hfm in exemplar_source_id
 !
 ! Each class is defined with the keyword LOOP followed by the loop ID,
 ! class name and length. This is then followed by the key residue numbers
@@ -17,10 +21,6 @@
 ! numbering. This keyword is only understood from KabatMan V2.16, so
 ! don't use this file with earlier versions!!
 !
-! MC 30/11/2012    Exemplar 2hfl of 3 has been superseded by 1yqv
-!                  (occurs also in auto and abm)
-! MC 26/6/2013     Replaced [7fab/3hfm] for H1 1' 10 with [3hfm/7fab]
-!                  then static loader puts 3hfm in exemplar_source_id
 !
 CHOTHIANUMBERING
 
