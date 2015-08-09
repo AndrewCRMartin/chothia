@@ -3,12 +3,12 @@
    Program:    Chothia
    File:       chothia.c
    
-   Version:    V2.0
-   Date:       14.02.11
+   Version:    V2.1
+   Date:       09.08.15
    Function:   Assign canonical classes and display reasons for 
                mismatches.
    
-   Copyright:  (c) Dr. Andrew C. R. Martin, UCL 1995-2011
+   Copyright:  (c) Dr. Andrew C. R. Martin, UCL 1995-2015
    Author:     Dr. Andrew C. R. Martin
    Address:    Biomolecular Structure & Modelling Unit,
                Department of Biochemistry & Molecular Biology,
@@ -69,6 +69,7 @@
    V2.0  14.02.11 Modified to allow new PRIORITY and SUBORDINATE keywords
                   in data file to deal with breakdown in classical 
                   canonicals
+   V2.1  09.08.15 Added -L and -H switches to do single chains
 
 *************************************************************************/
 /* Includes
@@ -174,14 +175,14 @@ int  main(int argc, char **argv);
 BOOL ReadChothiaData(char *filename);
 int  ReadInputData(FILE *in, SEQUENCE *Sequence);
 void ReportCanonicals(FILE *out, SEQUENCE *Sequence, int NRes, 
-                      BOOL verbose);
+                      BOOL verbose, char chain);
 int  FindRes(SEQUENCE *Sequence, int NRes, char *res);
 void ReportACanonical(FILE *out, char *LoopName, int LoopLen, 
                       SEQUENCE *Sequence, int NRes, BOOL verbose,
                       char *cdr, int cdrlen);
 void Usage(void);
 BOOL ParseCmdLine(int argc, char **argv, char *infile, char *outfile, 
-                  char *ChothiaFile, BOOL *verbose);
+                  char *ChothiaFile, BOOL *verbose, char *chain);
 char *KabCho(char *cdr, int length, char *kabspec);
 char *ChoKab(char *cdr, int length, char *kabspec);
 int TestThisCanonical(CHOTHIA *p, char *LoopName, int LoopLen,
@@ -206,10 +207,12 @@ int main(int argc, char **argv)
    SEQUENCE Sequence[MAXSEQ];
    int      NRes;
    BOOL     verbose;
+   char     chain = ' ';
 
    strncpy(ChothiaFile,"chothia.dat", MAXBUFF);
 
-   if(ParseCmdLine(argc, argv, InFile, OutFile, ChothiaFile, &verbose))
+   if(ParseCmdLine(argc, argv, InFile, OutFile, ChothiaFile, &verbose,
+                   &chain))
    {
       if(OpenStdFiles(InFile, OutFile, &in, &out))
       {
@@ -217,7 +220,7 @@ int main(int argc, char **argv)
          {
             if((NRes = ReadInputData(in, Sequence)) != 0)
             {
-               ReportCanonicals(out, Sequence, NRes, verbose);
+               ReportCanonicals(out, Sequence, NRes, verbose, chain);
             }
             else
             {
@@ -280,8 +283,8 @@ BOOL ReadChothiaData(char *filename)
            *buffp;
    CHOTHIA *p = NULL;
    int     count = 0;
-   BOOL    NoEnv,
-           GotSubPri = FALSE;
+   BOOL    NoEnv;
+/*           GotSubPri = FALSE; */
    
    /* Open the data file                                                */
    if((fp=OpenFile(filename,ENV_KABATDIR,"r",&NoEnv))==NULL)
@@ -313,7 +316,7 @@ BOOL ReadChothiaData(char *filename)
          }
          else if(!upstrncmp(buffp,"PRIORITY",8))
          {
-            GotSubPri = TRUE;
+/*            GotSubPri = TRUE; */
             /* Strip out the PRIORITY keyword                           */
             chp = GetWord(buffp,word,MAXWORD);
             /* And grab the class name over which this takes priority   */
@@ -322,7 +325,7 @@ BOOL ReadChothiaData(char *filename)
          }
          else if(!upstrncmp(buffp,"SUBORDINATE",11))
          {
-            GotSubPri = TRUE;
+/*            GotSubPri = TRUE; */
             /* Strip out the SUBORDINATE keyword                        */
             chp = GetWord(buffp,word,MAXWORD);
             /* And grab the class name to which this is subordinate     */
@@ -549,12 +552,13 @@ Expect <%d. Maybe two antibodies?\n", count, MAXEXPSEQ);
       
 /************************************************************************/
 /*>void ReportCanonicals(FILE *out, SEQUENCE *Sequence, int NRes, 
-                         BOOL verbose)
+                         BOOL verbose, char chain)
    ---------------------------------------------------------------
    Input:   FILE     *out          Output file pointer
             SEQUENCE *Sequence     Sequence array
             int      NRes          Length of sequence
             BOOL     verbose       Flag to display reasons
+            char     chain         Chain to handle (both if eq '')
 
    Reports the canonical classes for all 6 loops. Calls ReportACanonical()
    to do the work.
@@ -565,15 +569,18 @@ Expect <%d. Maybe two antibodies?\n", count, MAXEXPSEQ);
    08.05.96 Modified to determine length of CDR1 in each chain and pass
             it to the ReportACanonical() routine
    19.12.08 Changed strcpy() to strncpy()
+   09.08.15 Added chain handling
 */
 void ReportCanonicals(FILE *out, SEQUENCE *Sequence, int NRes, 
-                      BOOL verbose)
+                      BOOL verbose, char chain)
 {
    int         loop,
                len,
                cdr1len,
                start,
-               stop;
+               stop,
+               firstLoop,
+               lastLoop;
    char        cdr1[SMALLWORD];
    static LOOP LoopDef[] = 
    {  {  "L1", "L24", "L34"  },
@@ -584,7 +591,23 @@ void ReportCanonicals(FILE *out, SEQUENCE *Sequence, int NRes,
       {  "H3", "H95", "H102" }
    }  ;
    
-   for(loop=0; loop<NCDR; loop++)
+   /* Default to all CDRs                                               */
+   firstLoop = 0;
+   lastLoop  = NCDR;
+   
+   /* Update it we have specified to do only one chain                  */
+   if(chain == 'L')
+   {
+      firstLoop = 0;
+      lastLoop  = 3;
+   }
+   else if(chain == 'H')
+   {
+      firstLoop = 3;
+      lastLoop  = NCDR;
+   }
+
+   for(loop=firstLoop; loop<lastLoop; loop++)
    {
       if((start = FindRes(Sequence, NRes, LoopDef[loop].start)) == (-1))
       {
@@ -719,16 +742,19 @@ int FindRes(SEQUENCE *Sequence, int NRes, char *InRes)
    19.12.08 V1.6
    13.02.14 V1.7
    09.08.15 V2.0
+   09.08.15 V2.1 Added -L and -H
 */
 void Usage(void)
 {
-   fprintf(stderr,"\nChothia V2.0 (c) 1995-2015, Dr. Andrew C.R. Martin, \
+   fprintf(stderr,"\nChothia V2.1 (c) 1995-2015, Dr. Andrew C.R. Martin, \
 UCL\n\n");
 
-   fprintf(stderr,"Usage: chothia [-c filename] [-v] [-n] [input.seq \
-[output.dat]]\n");
+   fprintf(stderr,"Usage: chothia [-c filename] [-L|-H] [-v] [-n] \
+[input.seq [output.dat]]\n");
    fprintf(stderr,"               -c Specify Chothia datafile (Default: \
 chothia.dat)\n");
+   fprintf(stderr,"               -L Input only contains light chain\n");
+   fprintf(stderr,"               -H Input only contains heavy chain\n");
    fprintf(stderr,"               -v Verbose; give explanations when \
 no canonical found\n");
    fprintf(stderr,"               -n The sequence file has Chothia \
@@ -760,7 +786,7 @@ software.\n\n");
 
 /************************************************************************/
 /*>BOOL ParseCmdLine(int argc, char **argv, char *infile, char *outfile, 
-                  char *ChothiaFile, BOOL *verbose)
+                  char *ChothiaFile, BOOL *verbose, char *chain)
    ---------------------------------------------------------------------
    Input:   int  argc             Argument count
             char **argv           Argument array
@@ -768,6 +794,7 @@ software.\n\n");
             char *outfile         Output file (or blank string)
             char *ChothiaFile     Chothia data file
             BOOL *verbose         Flag to show details of mismatches
+            char *chain           Chain to  handle (default both)
    Returns: BOOL                  Success?
    Globals: BOOL gChothiaNumbered The sequence data is Chothia numbered
 
@@ -776,15 +803,17 @@ software.\n\n");
    16.05.95 Original    By: ACRM
    08.05.96 Added -n
    19.12.08 Changed strcpy() to strncpy()
+   09.08.15 Added -l and -h for chain specification
 */
 BOOL ParseCmdLine(int argc, char **argv, char *infile, char *outfile, 
-                  char *ChothiaFile, BOOL *verbose)
+                  char *ChothiaFile, BOOL *verbose, char *chain)
 {
    argc--;
    argv++;
 
    infile[0] = outfile[0] = '\0';
    *verbose = FALSE;
+   *chain   = ' ';
 
    gChothiaNumbered = FALSE;
    
@@ -804,6 +833,16 @@ BOOL ParseCmdLine(int argc, char **argv, char *infile, char *outfile,
             break;
          case 'n':
             gChothiaNumbered = TRUE;
+            break;
+         case 'L':
+            if(*chain != ' ')
+               return(FALSE);
+            *chain = 'L';
+            break;
+         case 'H':
+            if(*chain != ' ')
+               return(FALSE);
+            *chain = 'H';
             break;
          default:
             return(FALSE);
