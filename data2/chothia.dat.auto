@@ -1,0 +1,797 @@
+! Chothia canonical definitions for KabatMan.
+!
+! V1.0  09.05.95 Automatic assigments from acaca   By: ACRM
+!
+! Each class is defined with the keyword LOOP followed by the loop ID,
+! class name and length. This is then followed by the key residue numbers
+! paired with the allowed amino acid types.
+! Blank lines and lines starting with a ! or # are ignored
+! The SOURCE keyword may follow the LOOP keyword, but is ignored by
+! KabatMan.
+!
+! Note that the lengths of the loops are as defined by AbM since the
+! Kabat numbering for H1 fails to place the inserted residues within
+! the Chothia loop...
+!
+! This indicates that the numbering used is Chothia numbering not Kabat
+! numbering. This keyword is only understood from KabatMan V2.16, so
+! don't use this file with earlier versions!!
+CHOTHIANUMBERING
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-L1   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LOOP L1 4/16A 16
+SOURCE [1uz8]
+SUBORDINATE ?/16B
+L2  	ILVA
+L3  	VQLAE
+L4  	LMVI
+L23 	C
+L28 	STNAR
+L29 	LI
+L30B 	SNETGKA
+L30D 	G
+L32 	HYF
+L33 	MLF
+L35 	W
+L49 	YFKH
+L51 	MVIAGL
+L66 	G
+L69 	T
+L70 	DEAY
+L71 	F
+L88 	C
+L90 	QH
+L91 	NSVHAGITMF
+L92 	LTSVA
+L93 	EHLD
+
+LOOP L1 ?/16B 16
+SOURCE [4fab]
+PRIORITY 4/16A
+L2  	V
+L3  	V
+L4  	M
+L23 	C
+L28 	S
+L29 	L
+L30B 	S
+L30D 	G
+L32 	Y
+L33 	L
+L35 	W
+L49 	Y
+L51 	V
+L66 	G
+L69 	T
+L70 	D
+L71 	F
+L88 	C
+L90 	Q
+L91 	S
+L92 	T
+L93 	H
+
+! 
+! LOOP L1 ?/16C 16   
+! SOURCE [1jel]
+! L2   V
+! L4   M
+! L23  C
+! L25  S
+! L26  S
+! L27  Q
+! L29  I
+! L30A H
+! L30B G
+! L30C N
+! L30D G
+! L32  Y
+! L33  L
+! L34  E
+! L35  W
+! L51  I
+! L71  F
+! L88  C
+! L90  Q
+! L92  S
+! L93  H
+
+
+LOOP L1 1/10A 10
+SOURCE [2fbj]
+L2  I
+L4  L
+L23 C
+L25 A
+L29 V
+L33 LM
+L35 W
+L71 Y
+L88 C
+L90 Q
+L93 SYR
+
+LOOP L1 2/11A 11
+SOURCE [1ikf]
+L2  I
+L4  ML
+L23 C
+L25 A
+L26 S
+L28 NSDE
+L29 IV
+L33 LV
+L34 AGNSHVF
+L35 W
+L36 YLF
+L46 LRV
+L49 YHFK
+L51 ATGV
+L71 YF
+L90 HQ
+L93 GSNTREA
+
+LOOP L1 3/17A 17   
+SOURCE [1hil]
+L2   I
+L4   M
+L23  C
+L29  L
+L33  L
+L35  W
+L71  YF
+L90  N
+L93  NS
+
+
+LOOP L1 5/13A 13  
+SOURCE [2fb4]
+L2  S
+L4  L
+L23 C
+L25 G
+L29 ND
+L30 I
+L30A G
+L33 V
+L35 W
+L51 DN
+L71 A
+L88 C
+L90 A
+L93 VD
+
+LOOP L1 6/14A 14   
+SOURCE [7fab]
+L2   S
+L4   L
+L23  C
+L25  G
+L26  S
+L28  S
+L29  N
+L30  I
+L31  H
+L32  N
+L33  V
+L35  W
+L48  I
+L51  N
+L66  K
+L71  A
+L88  C
+L90  S
+L93  R
+
+LOOP L1 7/14B 14
+SOURCE [1gig]
+L2   AQ
+L4   V
+L23  C
+L26  S
+L28  G
+L29  AT
+L30  V
+L31  N
+L32  YH
+L33  A
+L35  W
+L48  I
+L51  T
+L66  L
+L71  A
+L88  C
+L90  L
+L93  SN
+
+
+LOOP L1 ?/11B 11  
+SOURCE [8fab]
+L4  L
+L23 C
+L25 A
+L26 N
+L28 L
+L29 P
+L33 A
+L34 Y
+L35 W
+L36 Y
+L46 M
+L49 Y
+L51 D
+L71 V
+L90 A
+L93 N
+
+LOOP L1 ?/12A 12
+SOURCE [1fig]
+L2 N
+L4 L
+L23 C
+L25 A
+L29 V
+L33 L
+L35 W
+L71 Y
+L88 C
+L90 Q
+L91 Y
+L93 G
+
+LOOP L1 ?/14C 14
+SOURCE [1mcwB]
+L2   S
+L4   L
+L23  C
+L26  T
+L28  S
+L29  D
+L30  V
+L31  N
+L32  Y
+L33  V
+L35  W
+L48  I
+L51  V
+L66  K
+L71  A
+L88  C
+L90  S
+L93  G
+
+LOOP L1 ?/14E 14
+SOURCE [2mcgA]
+L2   S
+L4   L
+L23  C
+L26  H
+L28  S
+L29  D
+L30  V
+L31  N
+L32  S
+L33  I
+L35  W
+L48  I
+L51  V
+L66  K
+L71  A
+L88  C
+L90  S
+L93  S
+
+LOOP L1 ?/14F 14
+SOURCE [2bjlA]
+L2   S
+L4   L
+L23  C
+L26  S
+L28  S
+L29  N
+L30  I
+L31  N
+L32  S
+L33  V
+L35  W
+L48  I
+L51  D
+L66  K
+L71  A
+L88  C
+L90  A
+L93  D
+
+LOOP L1 ?/15A 15
+SOURCE [1acy]
+L2   I
+L4   ML
+L23  C
+L24  R
+L25  A
+L26  S
+L28  S
+L29  V
+L30  DS
+L30C G
+L33  MI
+L34  H
+L35  W
+L51  A
+L71  F
+L88  C
+L90  QH
+L92  NR
+L93  E
+
+LOOP L1 ?/15B 15
+SOURCE [1ggi]
+L2   I
+L4   L
+L23  C
+L24  R
+L25  A
+L26  S
+L28  S
+L29  V
+L30  D
+L30C G
+L33  L
+L34  H
+L35  W
+L51  S
+L71  F
+L88  C
+L90  Q
+L92  N
+L93  E
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-L2   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LOOP L2 1/7A 7     
+SOURCE [1lmk]
+L23 C
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-L3   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LOOP L3 1/9A 9     
+SOURCE [1tet]
+L2 ILV
+L3 VQLE
+L4 ML
+L28 SNDTE
+L30 DLYVISNFHGT
+L31 SNTKG
+L32 FYNAHSR
+L33 MLVIF
+L88 C
+L89 QSGFL
+L90 QNH
+L91 NFGSRDHTYV
+L92 NYWTSRQHAD
+L93 ENGHTSRA
+L94 DYTVLHNIWPS
+L95 P
+L96 PLYRIWF
+L97 T
+L98 F
+
+LOOP L3 2/9B 9
+SOURCE [2fbj]
+L2 I
+L4 L
+L3 V
+L28 S
+L31 S
+L32 S
+L33 L
+L88 C
+L89 Q
+L90 Q
+L91 W
+L92 T
+L93 Y
+L94 P
+L95 L
+L96 I
+L97 T
+L98 F
+
+LOOP L3 3/8A 8
+SOURCE [2hfl]
+L36 Y
+L88 C
+L89 Q
+L90 Q
+L91 W
+L98 F
+
+LOOP L3 4/9C 9
+SOURCE [7fab]
+L2 QS
+L4 VL
+L3 IV
+L28 GS
+L30 VI
+L31 NH
+L32 HN
+L33 AV
+L88 C
+L89 AQ
+L90 LS
+L91 WY
+L92 SD
+L93 NR
+L94 NS
+L95 HL
+L96 WR
+L97 IV
+L98 F
+
+LOOP L3 5/11A 11
+SOURCE [2fb4]
+L4 L
+L33 V
+L88 C
+L89 A
+L90 A
+L92 DN
+L97 VG
+L98 F
+
+LOOP L3 ?/7A 7
+SOURCE [1dfb]
+L32 W
+L34 A
+L36 Y
+L88 C
+L90 Q
+L91 Y
+L98 F
+
+LOOP L3 ?/8B 8
+SOURCE [1eap]
+L36 Y
+L88 C
+L89 L
+L90 Q
+L91 Y
+L98 F
+
+LOOP L3 ?/9D 9
+SOURCE [1gig]
+L2 A
+L4 V
+L3 V
+L28 G
+L30 V
+L31 N
+L32 Y
+L33 A 
+L88 C
+L89 A
+L90 L
+L91 W
+L92 Y
+L93 S
+L94 N
+L95 HL
+L96 W
+L97 V
+L98 F
+
+LOOP L3 ?/9E 9
+SOURCE [1fig]
+L2 N
+L4 L
+L3 V
+L28 S
+L30 S
+L31 T
+L32 Y
+L33 L 
+L88 C
+L89 Q
+L90 Q
+L91 Y
+L92 S
+L93 G
+L94 Y
+L95 P
+L96 L
+L97 T
+L98 F
+
+LOOP L3 ?/9F 9
+SOURCE [8fab]
+L4 L
+L3 E
+L28 L
+L30 N
+L31 Q
+L32 Y
+L33 A
+L88 C
+L89 Q
+L90 A
+L91 W
+L92 D
+L93 N
+L94 S
+L95 A
+L96 S
+L97 I
+L98 F
+
+LOOP L3 ?/10A 10
+SOURCE [1baf]
+L4 L
+L32 Y
+L36 Y
+L88 C
+L89 Q
+L90 Q
+L91 W
+L92 S
+L95A P
+L96 I
+L97 T
+L98 F
+
+LOOP L3 ?/10B 10
+SOURCE [1mcwB]
+L4 L
+L32 Y
+L36 Y
+L88 C
+L89 S
+L90 S
+L91 Y
+L92 E
+L95A N
+L96 F
+L97 V
+L98 F
+
+LOOP L3 ?/10C 10
+SOURCE [2MCGA]
+L4 L
+L32 Y
+L36 Y
+L88 C
+L89 S
+L90 S
+L91 Y
+L92 E
+L95A N
+L96 F
+L97 V
+L98 F
+
+LOOP L3 ?/10D 10
+SOURCE [1mcwA]
+L4 L
+L32 S
+L36 F
+L88 C
+L89 M
+L90 S
+L91 Y
+L92 L
+L95A S
+L96 F
+L97 V
+L98 F
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-H1   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LOOP H1 1/10A 10
+SOURCE [2fbj]
+H2 VIG
+H4 LV
+H20 LIMV
+H22 C
+H24 TAVGS
+H26 G
+H29 IFLS
+H32 IHYFTNCED
+H33 YAWGTLV
+H34 IVMW
+H35 HENQSYT
+H36 W
+H48 IMVL
+H51 LIVTSN
+H69 ILFMV
+H78 ALVYF
+H80 LM
+H90 YF
+H92 C
+H94 RKGSHN
+H102 YHVISDG
+
+LOOP H1 2/11A 11
+SOURCE [1baf]
+H2 V
+H20 L
+H22 C
+H24 V
+H26 G
+H29 I
+H31A D
+H33 A
+H34 W
+H36 W
+H48 M
+H50 Y
+H53 Y
+H69 I
+H76 N
+H78 F
+H80 L
+H92 C
+H96 W
+
+LOOP H1 3/12A 12
+SOURCE [1ggi]
+H20 L
+H22 C
+H24 VF
+H26 G
+H28 S
+H29 IL
+H34 WV
+H36 W
+H48 ML
+H53 YW
+H78 FV
+H80 IL
+H92 C
+
+LOOP H1 ?/10C 10
+SOURCE [1nbv]
+H2  V
+H4  P
+H20 L
+H22 C
+H24 A
+H26 G
+H29 F
+H32 N
+H33 A
+H34 M
+H35 N
+H36 W
+H48 V
+H51 I
+H69 I
+H78 L
+H80 L
+H90 Y
+H92 C
+H94 R
+H102 Y
+
+LOOP H1 ?/10D 10
+SOURCE [1fig]
+H2  V
+H4  L
+H20 I
+H22 C
+H24 A
+H26 G
+H29 L
+H32 H
+H33 N
+H34 I
+H35 N
+H36 W
+H48 I
+H51 I
+H69 L
+H78 L
+H80 M
+H90 Y
+H92 C
+H94 R
+H102 Y
+
+
+
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-H2   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LOOP H2 1/9A 9
+SOURCE [1gig]
+H47 WY
+H51 IMV
+H55 G
+H59 YL
+H69 IM
+H71 RKV
+
+LOOP H2 2/10A 10
+SOURCE [1bbd]
+H33 YWGATL
+H47 WY
+H50 REWYGQVLNKA
+H51 LI
+H52 DLNSY
+H53 AGYSKTN
+H54 NSTKDG
+H56 YREDGVSA
+H58 KNTSDRGFY
+H59 Y
+H69 IFLM
+H71 VAL
+H78 ALV
+
+LOOP H2 3/10B 10
+SOURCE [1igc]
+H33 AGVYW
+H47 W
+H50 GTYFIEV
+H51 IV
+H52 SFWH
+H53 DGSN
+H54 SG
+H56 SYTNDR
+H58 GYHFDN
+H59 Y
+H69 I
+H71 R
+H78 L
+
+LOOP H2 4/12A 12
+SOURCE [1mcp]
+H47 W
+H50 FA
+H51 IS
+H59 Y
+H69 IV
+H71 R
+H78 L
+
+LOOP H2 ?/10E 10
+SOURCE [6fab]
+H33 G
+H47 W
+H50 Y
+H51 N
+H52 N
+H53 G
+H54 N
+H56 Y
+H58 A
+H59 Y
+H69 L
+H71 V
+H78 A
+
+LOOP H2 ?/10F 10
+SOURCE [1fig]
+H33 N
+H47 W
+H50 N
+H51 I
+H52 D
+H53 Y
+H54 Y
+H56 G
+H58 N
+H59 F
+H69 L
+H71 V
+H78 L
+
+LOOP H2 ?/12B 12
+SOURCE [4fab]
+H47 W
+H50 RQ
+H51 I
+H59 Y
+H69 I
+H71 R
+H78 LV
+
+
