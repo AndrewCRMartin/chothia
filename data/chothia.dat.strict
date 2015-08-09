@@ -1,0 +1,186 @@
+! Chothia canonical definitions for KabatMan.
+!
+! V1.0  09.05.95 Strict Chothia definitions from the papers By: ACRM
+!
+! Each class is defined with the keyword LOOP followed by the loop ID,
+! class name and length. This is then followed by the key residue numbers
+! paired with the allowed amino acid types.
+! Blank lines and lines starting with a ! or # are ignored
+! The SOURCE keyword may follow the LOOP keyword, but is ignored by
+! KabatMan.
+!
+! Note that the lengths of the loops are as defined by AbM since the
+! Kabat numbering for H1 fails to place the inserted residues within
+! the Chothia loop...
+!
+! This indicates that the numbering used is Chothia numbering not Kabat
+! numbering. This keyword is only understood from KabatMan V2.16, so
+! don't use this file with earlier versions!!
+!
+! MC 30/11/2012    Exemplar 2hfl of 3 has been superseded by 1yqv
+!                  (occurs also in auto and abm)
+! MC 26/6/2013     Replaced [7fab/3hfm] for H1 1' 10 with [3hfm/7fab]
+!                  then static loader puts 3hfm in exemplar_source_id
+!
+CHOTHIANUMBERING
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-L1   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LOOP L1 1 10
+SOURCE [2fbj]
+L2  I
+L25 A
+L29 VIL
+L33 LM
+L71 YF
+
+LOOP L1 2 11
+SOURCE  [1ikf]
+L2  I
+L25 A
+L29 VIL
+L33 LV
+L71 YF
+
+LOOP L1 3 17   
+SOURCE [1hil]
+L2   I
+L25  S
+L29  VIL
+L33  L
+L71  YF
+
+LOOP L1 4 16   
+SOURCE [1rmf] 
+L2   V
+L25  S
+L29  L
+L33  L
+L71  F
+
+LOOP L1 5 13  
+SOURCE [2fb4] This is a lambda Ab; later papers use class 5 for a 15-residue kappa
+L25 G
+L30 I
+L33 V
+L71 A
+
+LOOP L1 6 14   
+SOURCE  [7fab] This is a lambda Ab; later papers use class 6 for a 12-residue kappa
+L25  G
+L30  I
+L33  V
+L71  A
+
+LOOP L1 7 14
+SOURCE [1gig]
+L25  S
+L30  V
+L33  A
+L71  A
+
+LOOP L1 8 12
+SOURCE [1fig] Tomlinson et al (1995) EMBO J 14,4628-4638 number this as class 6
+L2 N
+L25 A
+L29 V
+L33 L
+L71 Y
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-L2   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LOOP L2 1 7     
+SOURCE  [1lmk]
+L48 IV
+L64 G
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-L3   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LOOP L3 1 9     
+SOURCE [1tet]
+L90 QNH
+L95 P
+
+LOOP L3 2 9
+SOURCE [2fbj]
+L94 P
+L95 L
+
+LOOP L3 3 8
+!SOURCE [2hfl]
+SOURCE [1yqv]
+L90 Q
+L96 P
+
+LOOP L3 4 9
+SOURCE No residues specified by Chothia [7fab]
+L90 LS
+L94 NS
+L95 HL
+
+LOOP L3 5 11
+SOURCE [2fb4]
+L94 DNG
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-H1   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LOOP H1 1 10
+SOURCE [2fbj]
+H24 TAVGS
+H26 G
+H27 FYTG
+H29 FLIV
+H34 MIVLT
+H94 RKTA
+
+LOOP H1 1' 10
+SOURCE [3hfm/7fab]
+H26 G
+H27 SD
+H29 FI
+H34 YW
+H94 RN
+
+LOOP H1 2 11
+SOURCE [1baf]
+H24 VF
+H26 G
+H27 GFY
+H29 IL
+H34 CW
+H96 HR
+
+LOOP H1 3 12
+SOURCE [1ggi]
+H24  VFG
+H26  G
+H27  FGD
+H29  ILV
+H34  WV
+H94  HR
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-H2   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LOOP H2 1 9
+SOURCE [1gig]
+H55 GD
+H71 RKVI
+
+LOOP H2 2 10
+SOURCE [1bbd]
+H52A PTA
+H55 GS
+H71 ALT
+
+LOOP H2 3 10
+SOURCE [1igc]
+H52A DP
+H54 GNDS
+H55 GS
+H71 R
+
+LOOP H2 4 12
+SOURCE [1mcp]
+H54 KS
+H55 Y
+H71 R
+

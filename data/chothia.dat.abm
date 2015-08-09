@@ -1,0 +1,201 @@
+! Chothia canonical definitions for KabatMan.
+!
+! V1.0  12.05.94 Original    By: ACRM
+! V1.1  19.05.94 Modified L1 Class 7* & added 8*
+! V1.2  20.02.95 Added H71=V for H2, class 2
+! V1.3  16.05.95 Changed L1 8* to 9* adding requirements for L32 and L71
+!                to match class numbering in AbM
+!                Added new L1 Class 8* 
+!                Modified L1 Class 7* by adding L32 and L71
+!                Added L3 Classes 4* to 10*
+! V1.4  09.05.96 Removed some additional classes as these are all treated
+!                properly by chothia.dat.auto
+!
+! Each class is defined with the keyword LOOP followed by the loop ID,
+! class name and length. This is then followed by the key residue numbers
+! paired with the allowed amino acid types.
+! Blank lines and lines starting with a ! or # are ignored
+! The SOURCE keyword may follow the LOOP keyword, but is ignored by
+! KabatMan.
+!
+! Class names contain a * if they are not defined by Chothia
+!
+! Note that the lengths of the loops are as defined by AbM since the
+! Kabat numbering for H1 fails to place the inserted residues within
+! the Chothia loop...
+!
+! MC 30/11/2012    Exemplar 2hfl of 3 has been superseded by 1yqv
+!                  (occurs also in auto and strict)
+!
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-L1   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LOOP L1 1 10
+SOURCE chothia:loops; Require L23, L35 (SMJS) [2fbj]
+L2  I
+L23 C
+L25 A
+L30 V
+L33 LM
+L35 W
+L71 Y
+
+LOOP L1 2 11
+SOURCE chothia:loops; Require L23, L35 (SMJS) [1ikf]
+L2  I
+L23 C
+L25 A
+L29 IV
+L33 L
+L35 W
+L71 YF
+
+LOOP L1 3 17   
+SOURCE chothia:loops; Require L23, L35 (SMJS) [1hil]
+L2   I
+L23  C
+L25  S
+L27B L
+L33  L
+L35  W
+L71  YF
+
+LOOP L1 4 16   
+SOURCE chothia:loops; Require L23, L35 (SMJS) [1rmf]
+L2   V
+L23  C
+L25  S
+L27B L
+L33  L
+L35  W
+L71  YF
+
+LOOP L1 5 13  
+SOURCE SMJS [2fb4]
+L2  S
+L23 C
+L25 G
+L28 I
+L33 V
+L35 W
+L71 A
+
+LOOP L1 6 14   
+SOURCE  [7fab]
+L25  G
+L30  I
+L33  V
+L71  A
+
+LOOP L1 7 14
+SOURCE [1gig]
+L25  S
+L30  V
+L33  A
+L71  A
+
+LOOP L1 8* 11  
+SOURCE SMJS [8fab]
+L3  E
+L23 C
+L25 SA
+L29 P
+L33 A
+L35 W
+L71 VSA
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-L2   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LOOP L2 1 7     
+SOURCE chothia:loops [1lmk]
+L48 IV
+L64 G
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-L3   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LOOP L3 1 9     
+SOURCE chothia:loops [1tet]
+L88 C
+L90 QNH
+L95 P
+
+LOOP L3 2 9     
+SOURCE chothia:loops [2fbj]
+L88 C
+L90 Q
+L94 P
+
+LOOP L3 3 8     
+!SOURCE chothia:loops [2hfl]
+SOURCE chothia:loops [1yqv]
+L88 C
+L90 Q
+L96 P
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-H1   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LOOP H1 1 10    
+SOURCE chothia:human; Require H92, ignore H24, add RGHTK to H94 (SMJS) [2fbj]
+! H24 AVGTS
+H26 G
+H27 GFY
+H29 IFVL
+H34 MILVTW
+H92 C
+H94 RTKHGL
+
+! Note, AbM calls this Class 2
+LOOP H1 1B 10   
+SOURCE ACRM (Based on chothia:loops, chothia:human and SMJS) [7fab]
+! H24 AVGTS
+H26 G
+H27 TD
+H29 IF
+H34 WS
+H92 C
+H94 RN
+
+! Note, AbM calls this Class 3
+LOOP H1 2 11    
+SOURCE chothia:human; Require H92 (SMJS) [1baf]
+! H24 FV
+H26 G
+H27 FYG
+H29 LI
+H35 CWV
+H92 C
+H94 HR
+
+! Note, AbM calls this Class 4
+LOOP H1 3 12    
+SOURCE chothia:human; Require H92 SMJS [1ggi]
+! H24  FVG
+H26  G
+H27  FGD
+H29  LIV
+H35A VW
+H92  C
+H94  RH
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-H2   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LOOP H2 1 9     
+SOURCE chothia:human [1gig]
+H55 DG
+H71 KRVI
+
+LOOP H2 2 10    
+SOURCE chothia:human; Allow H71=V (ACRM) [1bbd]
+H52A PTA
+H55 GS
+H71 ATLV
+
+LOOP H2 3 10    
+SOURCE chothia:human [1igc]
+H54 GSND
+H71 R
+
+LOOP H2 4 12    
+SOURCE chothia:human; Allow H54=G (SMJS) [1mcp]
+H54 SKNG
+H55 Y
+H71 R
+

@@ -1,0 +1,9 @@
+Chothia: Unable to find residue H26 in input
+Chothia: Unable to find residue H50 in input
+CDR L1  Class ?  
+! Similar to class 2, but:
+!    L33 (Kabat Numbering) = V (allows: L)
+CDR L2  Class 1   chothia:loops [1lmk]
+CDR L3  Class 1   chothia:loops [1tet]
+CDR H1  Missing Residues
+CDR H2  Missing Residues

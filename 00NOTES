@@ -1,0 +1,12 @@
+15 residue CDR-L1 class is missing from data files!
+
+This CDR L1 region is 15 amino acids (kabat L24 to L34, which is
+matching the cdr L1 region in bold). In the Chothia paper (Al-Lazikani
+B., Lesk A.M., Chothia C. (1997). Standard conformations for the
+canonical structures of immunoglobulins. J Mol Biol. 273(4):927-48.),
+CDR L1 with 15 AA are defined as class 5 CDR.  WAM result indicates
+class 8, corresponding to a 15 AA sequence, corresponding to the class
+k5 (Whitelegg N., Rees A.R. (2004).  Antibody variable Regions
+
+(See email dated 02.05.14 from mdondelinger@ulg.ac.be)
+
