@@ -3,12 +3,12 @@
    Program:    Chothia
    File:       chothia.c
    
-   Version:    V2.1
-   Date:       09.08.15
+   Version:    V2.2
+   Date:       14.12.16
    Function:   Assign canonical classes and display reasons for 
                mismatches.
    
-   Copyright:  (c) Dr. Andrew C. R. Martin, UCL 1995-2015
+   Copyright:  (c) Dr. Andrew C. R. Martin, UCL 1995-2016
    Author:     Dr. Andrew C. R. Martin
    Address:    Biomolecular Structure & Modelling Unit,
                Department of Biochemistry & Molecular Biology,
@@ -70,6 +70,8 @@
                   in data file to deal with breakdown in classical 
                   canonicals
    V2.1  09.08.15 Added -L and -H switches to do single chains
+   V2.2  14.12.16 File reading terminates at CR as well as LF to deal 
+                  with windows files.
 
 *************************************************************************/
 /* Includes
@@ -501,6 +503,7 @@ int ReadInputData(FILE *in, SEQUENCE *Sequence)
    while(fgets(buffer, MAXBUFF, in))
    {
       TERMINATE(buffer);  /* 13.02.14 Added this                        */
+      TERMINATECR(buffer);/* 14.12.16 Added this                        */
       
       if((buffer[0] == 'L' || buffer[0] == 'H') &&
          isdigit(buffer[1]))
@@ -743,10 +746,11 @@ int FindRes(SEQUENCE *Sequence, int NRes, char *InRes)
    13.02.14 V1.7
    09.08.15 V2.0
    09.08.15 V2.1 Added -L and -H
+   14.12.16 V2.2 
 */
 void Usage(void)
 {
-   fprintf(stderr,"\nChothia V2.1 (c) 1995-2015, Dr. Andrew C.R. Martin, \
+   fprintf(stderr,"\nChothia V2.2 (c) 1995-2016, Dr. Andrew C.R. Martin, \
 UCL\n\n");
 
    fprintf(stderr,"Usage: chothia [-c filename] [-L|-H] [-v] [-n] \
