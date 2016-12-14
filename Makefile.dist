@@ -1,11 +1,12 @@
 COPT	= -Wall -ansi -I$(HOME)/include
-LINK1	= -L$(HOME)/lib -lbiop -lgen 
+LINK1	= -L$(HOME)/lib
 LINK2	=
 CC	= cc
 
 EXE	= chothia
 OFILES	= chothia.o KabCho.o
-LFILES  = 
+LFILES  = bioplib/GetWord.o bioplib/OpenFile.o bioplib/OpenStdFiles.o \
+          bioplib/throne.o bioplib/upstrncmp.o bioplib/array2.c
 
 $(EXE) : $(OFILES) $(LFILES)
 	$(CC) -o $(EXE) $(OFILES) $(LFILES) $(LINK1) -lm $(LINK2)

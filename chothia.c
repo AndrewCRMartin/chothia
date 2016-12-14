@@ -72,6 +72,7 @@
    V2.1  09.08.15 Added -L and -H switches to do single chains
    V2.2  14.12.16 File reading terminates at CR as well as LF to deal 
                   with windows files.
+                  Changed to new blXXX() Bioplib functions
 
 *************************************************************************/
 /* Includes
@@ -216,7 +217,7 @@ int main(int argc, char **argv)
    if(ParseCmdLine(argc, argv, InFile, OutFile, ChothiaFile, &verbose,
                    &chain))
    {
-      if(OpenStdFiles(InFile, OutFile, &in, &out))
+      if(blOpenStdFiles(InFile, OutFile, &in, &out))
       {
          if(ReadChothiaData(ChothiaFile))
          {
@@ -275,6 +276,7 @@ datafile\n");
             Fixed explicit 160 in fgets to MAXBUFF
             Changed strcpy() to strncpy()
    14.02.11 Added PRIORITY and SUBORDINATE keywords
+   14.12.16 Changed to blGetWord()
 */
 BOOL ReadChothiaData(char *filename)
 {
@@ -289,7 +291,7 @@ BOOL ReadChothiaData(char *filename)
 /*           GotSubPri = FALSE; */
    
    /* Open the data file                                                */
-   if((fp=OpenFile(filename,ENV_KABATDIR,"r",&NoEnv))==NULL)
+   if((fp=blOpenFile(filename,ENV_KABATDIR,"r",&NoEnv))==NULL)
    {
       return(FALSE);
    }
@@ -306,39 +308,39 @@ BOOL ReadChothiaData(char *filename)
       if(strlen(buffp) && buffp[0] != '!' && buffp[0] != '#')
       {
          /* Handle the SOURCE keyword                                   */
-         if(!upstrncmp(buffp,"SOURCE",6))
+         if(!blUpstrncmp(buffp,"SOURCE",6))
          {
             if(p!=NULL)
             {
                /* Strip out the SOURCE keyword                          */
-               chp = GetWord(buffp,word,MAXWORD);
+               chp = blGetWord(buffp,word,MAXWORD);
                /* Store the text                                        */
                strncpy(p->source, chp, MAXWORD);
             }
          }
-         else if(!upstrncmp(buffp,"PRIORITY",8))
+         else if(!blUpstrncmp(buffp,"PRIORITY",8))
          {
 /*            GotSubPri = TRUE; */
             /* Strip out the PRIORITY keyword                           */
-            chp = GetWord(buffp,word,MAXWORD);
+            chp = blGetWord(buffp,word,MAXWORD);
             /* And grab the class name over which this takes priority   */
-            chp = GetWord(chp,p->priority,SMALLWORD);
+            chp = blGetWord(chp,p->priority,SMALLWORD);
             p->npriority = 1;
          }
-         else if(!upstrncmp(buffp,"SUBORDINATE",11))
+         else if(!blUpstrncmp(buffp,"SUBORDINATE",11))
          {
 /*            GotSubPri = TRUE; */
             /* Strip out the SUBORDINATE keyword                        */
-            chp = GetWord(buffp,word,MAXWORD);
+            chp = blGetWord(buffp,word,MAXWORD);
             /* And grab the class name to which this is subordinate     */
-            chp = GetWord(chp,p->subordinate,SMALLWORD);
+            chp = blGetWord(chp,p->subordinate,SMALLWORD);
             p->nsubordinate = 1;
          }
-         else if(!upstrncmp(buffp,"CHOTHIANUM",10))
+         else if(!blUpstrncmp(buffp,"CHOTHIANUM",10))
          {
             gCanonChothNum = TRUE;
          }
-         else if(!upstrncmp(buffp,"LOOP",4))    /* Start of entry       */
+         else if(!blUpstrncmp(buffp,"LOOP",4))    /* Start of entry     */
          {
             /* Terminate the previous list of resnums                   */
             if(p!=NULL)
@@ -361,13 +363,13 @@ BOOL ReadChothiaData(char *filename)
             p->npriority     = p->nsubordinate   = 0;
 
             /* Strip out the word LOOP                                  */
-            chp = GetWord(buffp,word,MAXWORD);
+            chp = blGetWord(buffp,word,MAXWORD);
             /* Get the loop id                                          */
-            chp = GetWord(chp,p->LoopID,SMALLWORD);
+            chp = blGetWord(chp,p->LoopID,SMALLWORD);
             /* Get the class name                                       */
-            chp = GetWord(chp,p->class,SMALLWORD);
+            chp = blGetWord(chp,p->class,SMALLWORD);
             /* Get the loop length                                      */
-            chp = GetWord(chp,word,MAXWORD);
+            chp = blGetWord(chp,word,MAXWORD);
             sscanf(word,"%d",&(p->length));
             
             /* Set the resnum counter to zero                           */
@@ -378,8 +380,8 @@ BOOL ReadChothiaData(char *filename)
             /* Not the start of an entry, so must be a resid/type pair  */
             if(p!=NULL)
             {
-               chp = GetWord(buffp,p->resnum[count],SMALLWORD);
-               chp = GetWord(chp,p->restype[count],MAXWORD);
+               chp = blGetWord(buffp,p->resnum[count],SMALLWORD);
+               chp = blGetWord(chp,p->restype[count],MAXWORD);
                if(++count > MAXCHOTHRES)
                {
                   fprintf(stderr,"Error: (chothia) Too many key \
@@ -492,6 +494,7 @@ to %s, but lengths do not match\n",
             New GetWord()
             Checks number of residues in file
             Added check on residue names of '-'
+   14.12.16 Changed to blGetWord()
 */
 int ReadInputData(FILE *in, SEQUENCE *Sequence)
 {
@@ -508,10 +511,10 @@ int ReadInputData(FILE *in, SEQUENCE *Sequence)
       if((buffer[0] == 'L' || buffer[0] == 'H') &&
          isdigit(buffer[1]))
       {
-         chp = GetWord(buffer, word, MAXWORD);
+         chp = blGetWord(buffer, word, MAXWORD);
          strncpy(Sequence[count].resnum, word, SMALLWORD);
          
-         chp = GetWord(chp, word, MAXWORD);
+         chp = blGetWord(chp, word, MAXWORD);
          if(strlen(word) == 0)
             return(0);
          
@@ -519,7 +522,7 @@ int ReadInputData(FILE *in, SEQUENCE *Sequence)
          {
             if(strlen(word) == 3)
             {
-               Sequence[count].seq = throne(word);
+               Sequence[count].seq = blThrone(word);
             }
             else if(strlen(word) == 1)
             {
