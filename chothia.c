@@ -3,13 +3,13 @@
    Program:    Chothia
    File:       chothia.c
    
-   Version:    V2.2
-   Date:       14.12.16
+   Version:    V2.3
+   Date:       12.10.21
    Function:   Assign canonical classes and display reasons for 
                mismatches.
    
-   Copyright:  (c) Dr. Andrew C. R. Martin, UCL 1995-2016
-   Author:     Dr. Andrew C. R. Martin
+   Copyright:  (c) Prof. Andrew C. R. Martin, UCL 1995-2021
+   Author:     Prof. Andrew C. R. Martin
    Address:    Biomolecular Structure & Modelling Unit,
                Department of Biochemistry & Molecular Biology,
                University College,
@@ -73,6 +73,8 @@
    V2.2  14.12.16 File reading terminates at CR as well as LF to deal 
                   with windows files.
                   Changed to new blXXX() Bioplib functions
+   V2.3  12.10.21 MAXBUFF bumped to 240 and MAXSEQ to 3000 (inherited 
+                  from abYsis version)
 
 *************************************************************************/
 /* Includes
@@ -92,8 +94,8 @@
 #define ENV_KABATDIR "KABATDIR"  /* Environment variable for Kabat      */
                                  /* directory                           */
 #define MAXCHOTHRES  80          /* Max number of key residues per class*/
-#define MAXBUFF      160         /* General buffer size                 */
-#define MAXSEQ       600         /* Max length of light + heavy chains  */
+#define MAXBUFF      240         /* General buffer size                 */
+#define MAXSEQ       3000        /* Max length of light + heavy chains  */
 #define MAXEXPSEQ    300         /* Expected max light + heavy          */
 #define NCDR         5           /* Number of CDRs to process           */
 #define MAXWORD      40          /* Max length of an extracted word     */
@@ -750,11 +752,12 @@ int FindRes(SEQUENCE *Sequence, int NRes, char *InRes)
    09.08.15 V2.0
    09.08.15 V2.1 Added -L and -H
    14.12.16 V2.2 
+   12.10.21 V2.3
 */
 void Usage(void)
 {
-   fprintf(stderr,"\nChothia V2.2 (c) 1995-2016, Dr. Andrew C.R. Martin, \
-UCL\n\n");
+   fprintf(stderr,"\nChothia V2.3 (c) 1995-2021, Prof. Andrew C.R. \
+Martin, UCL\n\n");
 
    fprintf(stderr,"Usage: chothia [-c filename] [-L|-H] [-v] [-n] \
 [input.seq [output.dat]]\n");
