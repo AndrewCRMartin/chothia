@@ -10,6 +10,8 @@
 !                Added L3 Classes 4* to 10*
 ! V1.4  09.05.96 Removed some additional classes as these are all treated
 !                properly by chothia.dat.auto
+! V1.5  13.06.22 Corrected L1 Classes 6 and 7 which had L30 (Chothia numbering)
+!                instead of L27C - Kaba numbering
 !
 ! Each class is defined with the keyword LOOP followed by the loop ID,
 ! class name and length. This is then followed by the key residue numbers
@@ -27,8 +29,6 @@
 ! MC 30/11/2012    Exemplar 2hfl of 3 has been superseded by 1yqv
 !                  (occurs also in auto and strict)
 !
-! ACRM 05.09.18    Changed to Chothia numbering
-CHOTHIANUMBERING
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!    CDR-L1   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 LOOP L1 1 10
@@ -36,7 +36,7 @@ SOURCE chothia:loops; Require L23, L35 (SMJS) [2fbj]
 L2  I
 L23 C
 L25 A
-L29 V
+L30 V
 L33 LM
 L35 W
 L71 Y
@@ -56,7 +56,7 @@ SOURCE chothia:loops; Require L23, L35 (SMJS) [1hil]
 L2   I
 L23  C
 L25  S
-L29  L
+L27B L
 L33  L
 L35  W
 L71  YF
@@ -66,32 +66,32 @@ SOURCE chothia:loops; Require L23, L35 (SMJS) [1rmf]
 L2   V
 L23  C
 L25  S
-L29  L
+L27B L
 L33  L
 L35  W
 L71  YF
 
-LOOP L1 5L 13  
-SOURCE SMJS [2fb4] This is a lambda Ab; later papers use class 5 for a 15-residue kappa
+LOOP L1 5 13  
+SOURCE SMJS [2fb4]
 L2  S
 L23 C
 L25 G
-L30 I
+L28 I
 L33 V
 L35 W
 L71 A
 
-LOOP L1 6L 14   
-SOURCE  [7fab] This is a lambda Ab; later papers use class 6 for a 12-residue kappa
+LOOP L1 6 14   
+SOURCE  [7fab]
 L25  G
-L30  I
+L27C I
 L33  V
 L71  A
 
 LOOP L1 7 14
 SOURCE [1gig]
 L25  S
-L30  V
+L27C V
 L33  A
 L71  A
 
@@ -163,7 +163,7 @@ SOURCE chothia:human; Require H92 (SMJS) [1baf]
 H26 G
 H27 FYG
 H29 LI
-H34 CWV
+H35 CWV
 H92 C
 H94 HR
 
@@ -174,7 +174,7 @@ SOURCE chothia:human; Require H92 SMJS [1ggi]
 H26  G
 H27  FGD
 H29  LIV
-H34  VW
+H35A VW
 H92  C
 H94  RH
 

@@ -1,0 +1,5 @@
+# Canonical methods
+# name, display name, display order
+auto|Auto|1
+abm|AbM|2
+strict|Strict|3
